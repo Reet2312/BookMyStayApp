@@ -1,32 +1,26 @@
-import java.util.Scanner;
-
-public class UseCase9ErrorHandlingValidation {
+public class UseCase10BookingCancellation {
 
     public static void main(String[] args) {
-        System.out.println("Booking Validation");
-        Scanner scanner = new Scanner(System.in);
-
         RoomInventory inventory = new RoomInventory();
-        ReservationValidator validator = new ReservationValidator();
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
+        CancellationService cancellationService = new CancellationService();
 
-        try {
-            System.out.print("Enter Guest Name: ");
-            String guestName = scanner.nextLine();
+        // 1. Register some confirmed bookings
+        cancellationService.registerBooking("RES-7001", "Double");
+        cancellationService.registerBooking("RES-7002", "Suite");
+        cancellationService.registerBooking("RES-7003", "Single");
 
-            System.out.print("Enter Room Type (e.g., Single, Double, Suite): ");
-            String roomType = scanner.nextLine();
+        System.out.println("Initial Inventory (Suite): " + inventory.getAvailableRooms().get("Suite"));
 
-            validator.validate(guestName, roomType, inventory);
+        // 2. Perform cancellations
+        cancellationService.cancelBooking("RES-7002", inventory); // Suite
+        cancellationService.cancelBooking("RES-7003", inventory); // Single
+        // 3. Verify Inventory Rollback
+        System.out.println("Updated Inventory (Suite): " + inventory.getAvailableRooms().get("Suite"));
 
-            BookingRequest request = new BookingRequest(guestName, roomType);
-            bookingQueue.enqueueRequest(request);
-            System.out.println("Booking request successfully validated and queued.");
+        // 4. Visualize Rollback Order (LIFO)
+        cancellationService.showRollbackHistory();
 
-        } catch (InvalidBookingException e) {
-            System.out.println("Booking failed: " + e.getMessage());
-        } finally {
-            scanner.close();
-        }
+        // 5. Attempt invalid cancellation
+        cancellationService.cancelBooking("RES-9999", inventory);
     }
 }
