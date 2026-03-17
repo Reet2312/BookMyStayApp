@@ -1,32 +1,25 @@
-public class UseCase11ConcurrentBookingSimulation {
+public class UseCase12DataPersistenceRecovery {
 
     public static void main(String[] args) {
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
         RoomInventory inventory = new RoomInventory();
-        RoomAllocationService allocationService = new RoomAllocationService();
+        FilePersistenceService persistenceService = new FilePersistenceService();
+        String filePath = "inventory_state.txt";
 
-        bookingQueue.enqueueRequest(new BookingRequest("User A", "Suite"));
-        bookingQueue.enqueueRequest(new BookingRequest("User B", "Suite"));
-        bookingQueue.enqueueRequest(new BookingRequest("User C", "Single"));
-        bookingQueue.enqueueRequest(new BookingRequest("User D", "Double"));
+        System.out.println("--- System Startup ---");
+        persistenceService.loadInventory(inventory, filePath);
 
-        Thread t1 = new Thread(
-                new ConcurrentBookingProcessor(bookingQueue, inventory, allocationService)
-        );
+        System.out.println("Current Inventory: " + inventory.getAvailableRooms());
 
-        Thread t2 = new Thread(
-                new ConcurrentBookingProcessor(bookingQueue, inventory, allocationService)
-        );
-
-        t1.start();
-        t2.start();
-
-        try {
-            t1.join();
-            t2.join();
-            System.out.println("Concurrent processing complete.");
-        } catch (InterruptedException e) {
-            System.out.println("Thread execution interrupted.");
+        System.out.println("\n--- Simulating Booking Activity ---");
+        if (inventory.getAvailableRooms().containsKey("Suite")) {
+            int currentSuites = inventory.getAvailableRooms().get("Suite");
+            if (currentSuites > 0) {
+                inventory.getAvailableRooms().put("Suite", currentSuites - 1);
+                System.out.println("One Suite booked. New count: " + (currentSuites - 1));
+            }
         }
+
+        System.out.println("\n--- System Shutdown ---");
+        persistenceService.saveInventory(inventory, filePath);
     }
 }
