@@ -1,21 +1,19 @@
-public class UseCase5BookingRequestQueue {
+import java.util.*;
+
+public class UseCase6RoomAllocation {
+
     public static void main(String[] args) {
-        System.out.println("Booking Request Queue");
+        Queue<Reservation> bookingQueue = new LinkedList<>();
+        RoomInventory inventory = new RoomInventory();
+        RoomAllocationService allocationService = new RoomAllocationService();
 
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
+        bookingQueue.add(new Reservation("Deluxe"));
+        bookingQueue.add(new Reservation("Standard"));
+        bookingQueue.add(new Reservation("Deluxe"));
 
-        Reservation r1 = new Reservation("Abhi", "Single");
-        Reservation r2 = new Reservation("Subha", "Double");
-        Reservation r3 = new Reservation("Vanmathi", "Suite");
-
-        bookingQueue.addRequest(r1);
-        bookingQueue.addRequest(r2);
-        bookingQueue.addRequest(r3);
-
-        while (bookingQueue.hasPendingRequests()) {
-            Reservation request = bookingQueue.getNextRequest();
-            System.out.println("Processing request for: " + request.getGuestName() +
-                    " [" + request.getRoomType() + "]");
+        while (!bookingQueue.isEmpty()) {
+            Reservation currentRequest = bookingQueue.poll();
+            allocationService.allocateRoom(currentRequest, inventory);
         }
     }
 }
