@@ -1,20 +1,12 @@
-**
-        * UseCase3InventorySetup - Demonstrates centralized inventory management
+/**
+ * UseCase4RoomSearch - Demonstrates room search and availability check
  */
-public class UseCase3InventorySetup {
+public class UseCase4RoomSearch {
     public static void main(String[] args) {
         RoomInventory inventory = new RoomInventory();
+        RoomSearchService searchService = new RoomSearchService(inventory);
 
-        System.out.println("Initial Inventory:");
-        inventory.displayInventory();
-
-        System.out.println("\nChecking availability:");
-        System.out.println("Single Room: " + inventory.getAvailability("Single Room"));
-
-        System.out.println("\nUpdating inventory...");
-        inventory.updateAvailability("Single Room", 9);
-
-        System.out.println("\nUpdated Inventory:");
-        inventory.displayInventory();
+        System.out.println("=== Available Rooms ===\n");
+        searchService.displayAvailableRooms();
     }
 }
