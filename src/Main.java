@@ -1,28 +1,17 @@
-import java.util.List;
-
-public class UseCase7AddOnServiceSelection {
+public class UseCase8BookingHistoryReport {
 
     public static void main(String[] args) {
-        AddOnServiceManager manager = new AddOnServiceManager();
+        BookingHistory history = new BookingHistory();
+        BookingReportService reportService = new BookingReportService();
 
-        AddOnService breakfast = new AddOnService("Breakfast", 15.0);
-        AddOnService spa = new AddOnService("Spa", 50.0);
-        AddOnService airportPickup = new AddOnService("Airport Pickup", 30.0);
+        Reservation res1 = new Reservation("RES-5001", "Alice Smith");
+        Reservation res2 = new Reservation("RES-5002", "Bob Johnson");
+        Reservation res3 = new Reservation("RES-5003", "Charlie Brown");
 
-        String reservationId = "RES-1001";
+        history.addReservation(res1);
+        history.addReservation(res2);
+        history.addReservation(res3);
 
-        manager.addService(reservationId, breakfast);
-        manager.addService(reservationId, spa);
-        manager.addService(reservationId, airportPickup);
-
-        System.out.println("Reservation ID: " + reservationId);
-        List<AddOnService> selected = manager.getServicesForReservation(reservationId);
-
-        for (AddOnService s : selected) {
-            System.out.println("- Service: " + s.getServiceName() + " | Cost: $" + s.getCost());
-        }
-
-        double totalCost = manager.calculateTotalServiceCost(reservationId);
-        System.out.println("Total Add-On Cost: $" + totalCost);
+        reportService.generateReport(history);
     }
 }
